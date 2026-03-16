@@ -8,8 +8,9 @@
 <style>
   :root {
     --gold: #ffd700;
-    --pink-glow: #ff69b4;
+    --pink: #ff69b4;
     --dark: #000;
+    --bg-gradient: radial-gradient(circle at center, #1a1a2e, #000);
   }
   * { margin:0; padding:0; box-sizing:border-box; }
   body {
@@ -19,22 +20,21 @@
     overflow-x: hidden;
     min-height: 100vh;
   }
-  h1, h2 {
+  h1, h2 { 
     font-family: 'Dancing Script', cursive;
     color: var(--gold);
-    text-shadow: 0 0 15px rgba(255,215,0,0.7), 0 0 30px rgba(255,105,180,0.4);
+    text-shadow: 0 0 20px rgba(255,215,0,0.8), 0 0 40px rgba(255,105,180,0.5);
   }
-
   #login-box {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    background: radial-gradient(circle at center, #1a1a2e, #000);
+    background: var(--bg-gradient);
     text-align: center;
   }
-  #login-box h2 { font-size: 4.5rem; margin-bottom: 2rem; }
+  #login-box h2 { font-size: clamp(3rem, 8vw, 4.5rem); margin-bottom: 2rem; }
   input {
     padding: 14px 24px;
     margin: 12px;
@@ -42,12 +42,12 @@
     max-width: 90%;
     border: none;
     border-radius: 50px;
-    background: rgba(255,255,255,0.08);
+    background: rgba(255,255,255,0.1);
     color: white;
     font-size: 1.1rem;
-    backdrop-filter: blur(8px);
+    backdrop-filter: blur(10px);
   }
-  input::placeholder { color: rgba(255,255,255,0.6); }
+  input::placeholder { color: rgba(255,255,255,0.7); }
   button {
     padding: 14px 40px;
     border: none;
@@ -58,14 +58,12 @@
     font-size: 1.2rem;
     cursor: pointer;
     transition: all 0.4s ease;
-    box-shadow: 0 0 25px rgba(255,215,0,0.5);
+    box-shadow: 0 0 25px rgba(255,215,0,0.6);
   }
-  button:hover {
-    transform: translateY(-4px) scale(1.05);
-    box-shadow: 0 0 40px rgba(255,105,180,0.7);
-  }
+  button:hover { transform: translateY(-5px) scale(1.08); box-shadow: 0 0 50px rgba(255,105,180,0.8); }
 
-  #main { display: none; }
+  #main { display: none; opacity: 0; transition: opacity 1.5s ease; }
+  #main.visible { opacity: 1; }
 
   section {
     min-height: 100vh;
@@ -76,9 +74,13 @@
     padding: 60px 20px;
     text-align: center;
     position: relative;
+    opacity: 0;
+    transform: translateY(40px);
+    transition: all 1.2s ease-out;
   }
+  section.visible { opacity: 1; transform: translateY(0); }
 
-  /* Hero video */
+  /* Hero */
   #hero {
     position: relative;
     height: 100vh;
@@ -91,21 +93,13 @@
     transform: translate(-50%,-50%);
     object-fit: cover;
     z-index: -1;
-    filter: brightness(0.35) contrast(1.1);
+    filter: brightness(0.4) contrast(1.15);
   }
-  .hero-content h1 {
-    font-size: 6rem;
-    margin-bottom: 1.5rem;
-    animation: neonGlow 4s ease-in-out infinite alternate;
-  }
+  .hero-content h1 { font-size: clamp(4rem, 10vw, 7rem); margin-bottom: 1.5rem; animation: neonGlow 5s ease-in-out infinite alternate; }
+
   @keyframes neonGlow {
-    from { text-shadow: 0 0 10px gold, 0 0 20px pink; }
-    to   { text-shadow: 0 0 30px gold, 0 0 60px pink; }
-  }
-  #scroll-btn {
-    margin-top: 2rem;
-    padding: 16px 50px;
-    font-size: 1.3rem;
+    from { text-shadow: 0 0 15px gold, 0 0 30px pink; }
+    to   { text-shadow: 0 0 40px gold, 0 0 80px pink; }
   }
 
   /* About */
@@ -115,200 +109,213 @@
     flex-wrap: wrap;
     justify-content: center;
     align-items: center;
-    max-width: 1000px;
+    max-width: 1100px;
   }
   .container img {
-    width: 260px;
-    height: 260px;
+    width: 280px;
+    height: 280px;
     border-radius: 50%;
     object-fit: cover;
-    box-shadow: 0 0 40px rgba(255,215,0,0.5);
-    border: 4px solid rgba(255,215,0,0.2);
-  }
-  .container p {
-    font-size: 1.3rem;
-    max-width: 500px;
-    line-height: 1.7;
+    box-shadow: 0 0 50px rgba(255,215,0,0.6);
+    border: 5px solid rgba(255,215,0,0.25);
+    loading: lazy;
   }
 
-  /* Full-screen moments video + text overlay */
-  #video-section {
+  /* Video sections */
+  .video-section {
     height: 100vh;
     position: relative;
     overflow: hidden;
     background: #000;
   }
-  #video-section video {
+  .video-section video, .youtube-container {
     position: absolute;
-    top: 50%; left: 50%;
-    min-width: 100%; min-height: 100%;
-    transform: translate(-50%,-50%);
+    top: 0; left: 0;
+    width: 100%; height: 100%;
     object-fit: cover;
-    z-index: 1;
   }
   .video-overlay {
     position: absolute;
     inset: 0;
-    background: linear-gradient(to bottom, rgba(0,0,0,0.5), rgba(0,0,0,0.8));
-    backdrop-filter: blur(4px);
+    background: linear-gradient(to bottom, rgba(0,0,0,0.55), rgba(0,0,0,0.85));
+    backdrop-filter: blur(5px);
     z-index: 2;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     padding: 40px;
-    animation: fadeInText 2.8s ease-out forwards;
   }
-  @keyframes fadeInText {
-    from { opacity: 0; transform: translateY(30px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-  .video-overlay h2 {
-    font-size: 5rem;
-    margin-bottom: 2rem;
-  }
+  .video-overlay h2 { font-size: clamp(3.5rem, 8vw, 5.5rem); margin-bottom: 2rem; }
   .moments-text {
     font-family: 'Caveat', cursive;
-    font-size: 2.1rem;
-    line-height: 1.65;
-    max-width: 900px;
+    font-size: clamp(1.6rem, 4vw, 2.3rem);
+    line-height: 1.7;
+    max-width: 950px;
     text-align: center;
-    opacity: 0.95;
-    letter-spacing: 0.5px;
+    opacity: 0.97;
   }
-  .moments-text span {
-    display: block;
-    margin: 0.9rem 0;
-  }
-  .moments-text .highlight {
-    color: var(--pink-glow);
-    font-weight: bold;
-    text-shadow: 0 0 15px rgba(255,105,180,0.8);
-  }
+  .highlight { color: var(--pink); font-weight: bold; text-shadow: 0 0 20px rgba(255,105,180,0.9); }
 
-  /* Letter card */
+  /* YouTube specific */
+  .youtube-container { position: relative; z-index: 1; }
+  .youtube-container iframe { border: none; }
+
+  /* Letter & others */
   .letter-card {
-    background: rgba(255,255,255,0.07);
-    backdrop-filter: blur(16px);
-    border: 1px solid rgba(255,215,0,0.15);
-    padding: 50px 40px;
-    border-radius: 24px;
-    max-width: 700px;
-    box-shadow: 0 15px 50px rgba(0,0,0,0.6);
-  }
-  .letter-card h2 { font-size: 3.8rem; margin-bottom: 1.5rem; }
-  .letter-card p { font-size: 1.35rem; line-height: 1.8; }
-
-  /* Countdown */
-  .timer {
-    display: flex;
-    gap: 24px;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-  .time-unit {
     background: rgba(255,255,255,0.08);
-    backdrop-filter: blur(12px);
+    backdrop-filter: blur(20px);
     border: 1px solid rgba(255,215,0,0.2);
-    padding: 24px 32px;
-    border-radius: 16px;
-    min-width: 110px;
-    box-shadow: 0 0 30px rgba(255,215,0,0.3);
+    padding: 60px 50px;
+    border-radius: 30px;
+    max-width: 750px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.7);
   }
-  .time-unit span {
-    font-size: 3.2rem;
-    font-weight: bold;
-    color: var(--gold);
-    display: block;
-  }
+  .letter-card h2 { font-size: 4.2rem; }
 
-  footer {
-    padding: 40px 20px;
-    background: var(--dark);
-    font-size: 1.2rem;
-    text-align: center;
+  .timer { display: flex; gap: 30px; flex-wrap: wrap; justify-content: center; }
+  .time-unit {
+    background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255,215,0,0.25);
+    padding: 28px 38px;
+    border-radius: 20px;
+    min-width: 120px;
+    box-shadow: 0 0 40px rgba(255,215,0,0.4);
   }
+  .time-unit span { font-size: 3.8rem; font-weight: bold; color: var(--gold); display: block; }
 
-  /* Floating hearts */
-  .heart {
-    position: fixed;
-    font-size: 1.8rem;
-    pointer-events: none;
-    z-index: 999;
-    will-change: transform, opacity;
-    animation: floatHeart linear forwards;
-  }
+  footer { padding: 50px 20px; text-align: center; font-size: 1.3rem; }
+
+  .heart { position: fixed; font-size: 2rem; pointer-events: none; z-index: 999; animation: floatHeart linear forwards; }
   @keyframes floatHeart {
-    0%   { transform: translateY(0) translateX(0) rotate(0deg) scale(0.8); opacity: 0; }
-    10%  { opacity: 0.9; }
-    100% { transform: translateY(-120vh) translateX(calc(var(--drift) * 1px)) rotate(calc(var(--rotate) * 1deg)) scale(1.2); opacity: 0; }
+    0%   { transform: translateY(0) translateX(0) rotate(0deg) scale(0.7); opacity: 0; }
+    15%  { opacity: 1; }
+    100% { transform: translateY(-130vh) translateX(calc(var(--drift) * 1px)) rotate(calc(var(--rotate) * 1deg)) scale(1.3); opacity: 0; }
   }
 
   @media (max-width: 768px) {
-    .hero-content h1 { font-size: 3.8rem; }
-    .container { flex-direction: column; gap: 40px; text-align: center; }
-    .timer { flex-direction: column; gap: 20px; }
-    .video-overlay h2 { font-size: 3.5rem; }
-    .moments-text { font-size: 1.7rem; line-height: 1.5; }
+    .hero-content h1 { font-size: clamp(3rem, 12vw, 4.5rem); }
+    .container { flex-direction: column; gap: 50px; }
+    .video-overlay h2 { font-size: clamp(2.8rem, 10vw, 4rem); }
+    .moments-text { font-size: clamp(1.4rem, 5vw, 1.9rem); }
+    .timer { flex-direction: column; gap: 25px; }
   }
 </style>
 </head>
 <body>
-
 <div id="login-box">
   <h2>Enter Our Secret 🎀</h2>
-  <input id="user" placeholder="Username">
-  <input id="pass" type="password" placeholder="Password">
+  <input id="user" placeholder="Username" autocomplete="off">
+  <input id="pass" type="password" placeholder="Password" autocomplete="off">
   <button onclick="checkLogin()">Unlock Your Surprise ❤️</button>
 </div>
 
 <div id="main">
   <section id="hero">
-    <video autoplay muted loop playsinline id="bg-video">
+    <video autoplay muted loop playsinline id="bg-video" loading="lazy">
       <source src="birthday.mp4" type="video/mp4">
     </video>
     <div class="hero-content">
       <h1>Happy Birthday<br>Priya ❤️</h1>
-      <button id="scroll-btn">Discover My Love</button>
+      <button id="scroll-btn">Discover My Love ↓</button>
     </div>
   </section>
 
   <section id="about" style="background:#0a0a0a;">
     <div class="container">
-      <img src="https://via.placeholder.com/400x400/ffb6c1/000?text=Priya" alt="Priya">
+      <img src="https://img.sanishtech.com/u/4b3889ea5466a6b6877293634eed3dd9.jpeg" alt="Priya smiling beautifully on her birthday" loading="lazy">
       <div>
         <h2>About My Love</h2>
-        <p>Priya, your smile lights up my entire world. You are the most beautiful part of my life and every moment with you feels magical. You make ordinary days extraordinary.</p>
+        <p>Priya, your smile is my favorite light in this world. Every laugh, every shy glance, every moment with you turns ordinary days into something unforgettable. You are my peace, my joy, and my everything.</p>
       </div>
     </div>
   </section>
 
-  <section id="video-section">
-    <video autoplay loop muted playsinline>
+  <section id="video-section" class="video-section">
+    <video autoplay loop muted playsinline loading="lazy">
       <source src="birthday.mp4" type="video/mp4">
-      Your browser does not support the video tag.
     </video>
     <div class="video-overlay">
       <h2>Our Special Moments 💖</h2>
       <div class="moments-text">
-        <span>The day we first met.</span>
-        <span>My heart still remembers that moment.</span>
-        <span>Our train journeys together.</span>
-        <span>Sitting close and talking for hours.</span>
-        <span>Holding your hand.</span>
-        <span>Watching you smile shyly.</span>
-        <span>Giving you that rose 🌹.</span>
-        <span>Taking those cute photos together.</span>
-        <span>Seeing my name in your mehndi.</span>
-        <span class="highlight">That moment meant everything to me.</span>
-        <span>Your teasing.</span>
-        <span>Your little anger.</span>
-        <span>Your cute smile.</span>
-        <span>Even our small fights.</span>
-        <span>They are part of our story.</span>
-        <span>Every moment with you is special.</span>
-        <span>Every memory with you is precious.</span>
-        <span class="highlight">You are my favorite memory, Priya. 💗</span>
+        <span>The day our eyes first met...</span>
+        <span>Train rides filled with stolen glances.</span>
+        <span>Holding your hand like it was forever.</span>
+        <span>That rose I gave you 🌹 — your shy smile.</span>
+        <span>My name in your mehndi — my heart stopped.</span>
+        <span class="highlight">Every tease, every little fight, every laugh...</span>
+        <span class="highlight">You are still, and always will be, my favorite memory. 💗</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="personal-video" class="video-section">
+    <video autoplay loop muted playsinline poster="https://img.sanishtech.com/u/4b3889ea5466a6b6877293634eed3dd9.jpeg" loading="lazy">
+      <source src="personal-moment.mp4" type="video/mp4">
+    </video>
+    <div class="video-overlay">
+      <h2>Just You & Me 💞</h2>
+      <div class="moments-text">
+        <span>The way you look at me...</span>
+        <span>Makes the whole world disappear.</span>
+        <span>Quiet evenings, crazy laughs,</span>
+        <span>Every second feels like home.</span>
+        <span class="highlight">I promise to cherish and protect this forever.</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="forever-video" class="video-section">
+    <video autoplay loop muted playsinline poster="https://img.sanishtech.com/u/4b3889ea5466a6b6877293634eed3dd9.jpeg" loading="lazy">
+      <source src="forever-love.mp4" type="video/mp4">
+    </video>
+    <div class="video-overlay">
+      <h2>Forever With You 🌟</h2>
+      <div class="moments-text">
+        <span>From today, and every birthday after...</span>
+        <span>We'll chase dreams side by side.</span>
+        <span>Wake up to sunrises, fall asleep to your heartbeat.</span>
+        <span class="highlight">You are my forever, Priya.</span>
+        <span>To infinity — and way beyond. 💫❤️</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="song-section" class="video-section">
+    <div class="youtube-container">
+      <iframe 
+        src="https://www.youtube.com/embed/JIv6kuk6GaY?autoplay=1&mute=1&loop=1&playlist=JIv6kuk6GaY&controls=0&rel=0&modestbranding=1&showinfo=0&iv_load_policy=3" 
+        title="Our song that says everything"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen>
+      </iframe>
+    </div>
+    <div class="video-overlay" style="background: linear-gradient(to bottom, rgba(0,0,0,0.6), rgba(0,0,0,0.9));">
+      <h2>Our Song 💕🎶</h2>
+      <div class="moments-text">
+        <span>Every time this plays, I see your face.</span>
+        <span>Every word feels written for us.</span>
+        <span class="highlight">Close your eyes, listen, and feel how deeply I love you.</span>
+        <span>— This is for you, my Priya ❤️</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- NEW SPECIAL VIDEO GREETINGS SECTION -->
+  <section id="special-greetings" class="video-section">
+    <video autoplay loop muted playsinline poster="https://img.sanishtech.com/u/4b3889ea5466a6b6877293634eed3dd9.jpeg" loading="lazy">
+      <source src="birthday.mp4" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
+    <div class="video-overlay">
+      <h2>Special Video Greetings For You 🎂💌</h2>
+      <div class="moments-text">
+        <span>This is just for you, my love...</span>
+        <span>Every second of this is filled with my feelings.</span>
+        <span>Watch it, smile, and know that</span>
+        <span class="highlight">you're the most precious person in my life.</span>
+        <span>Happy Birthday, Priya ❤️</span>
       </div>
     </div>
   </section>
@@ -316,12 +323,15 @@
   <section id="message" style="background:#0a0a0a;">
     <div class="letter-card">
       <h2>My Heartfelt Words</h2>
-      <p>On your birthday I want to remind you how incredibly special you are to me. You bring light, joy, and endless love into my life. Thank you for being you.</p>
-      <p style="margin-top:2rem; font-style:italic;">Happy Birthday, my forever love ❤️<br>— Pranay</p>
+      <p>My dearest Priya, on your special day I want you to know — you are the miracle I never knew I needed. You fill my life with color, warmth, and a love I never thought possible. Thank you for choosing me, for every smile, every hug, every moment. I promise to love you fiercely, endlessly, always.</p>
+      <p style="margin-top:2.5rem; font-style:italic; font-size:1.5rem;">
+        Happy Birthday, my forever love.<br>
+        <span style="font-family: 'Dancing Script'; font-size: 2.8rem; color: var(--pink);">With all my heart,</span><br>Pranay ❤️
+      </p>
     </div>
   </section>
 
-  <section id="countdown">
+  <section id="countdown" style="background: linear-gradient(135deg, #0f0f23, #000);">
     <h2>Time Until Your Next Birthday</h2>
     <div class="timer">
       <div class="time-unit"><span id="days">00</span><br>Days</div>
@@ -332,45 +342,47 @@
   </section>
 
   <footer>
-    <p>"Every moment with you feels like magic"</p>
-    <p>— Pranay ❤️</p>
+    <p>"You make every moment feel like magic"</p>
+    <p>— Forever yours, Pranay ❤️</p>
   </footer>
 </div>
 
 <script>
+// Login
 function checkLogin() {
   const u = document.getElementById("user").value.trim().toLowerCase();
   const p = document.getElementById("pass").value;
   if (u === "priya" && p === "pranay") {
     document.getElementById("login-box").style.display = "none";
     document.getElementById("main").style.display = "block";
+    setTimeout(() => document.getElementById("main").classList.add("visible"), 100);
     startHearts();
     window.scrollTo({ top: 0, behavior: "smooth" });
   } else {
-    alert("Wrong password... try again my love ❤️");
+    alert("Wrong password... try again, my love ❤️");
   }
 }
 
+// Floating hearts
 function startHearts() {
   setInterval(() => {
     const heart = document.createElement("div");
     heart.className = "heart";
-    heart.innerHTML = ["❤️","💖","💗","💕"][Math.floor(Math.random()*4)];
-    const size = 1.4 + Math.random()*1.8;
+    heart.innerHTML = ["❤️","💖","💗","💕","💘"][Math.floor(Math.random()*5)];
+    const size = 1.5 + Math.random()*2;
     heart.style.fontSize = size + "rem";
     heart.style.left = Math.random()*100 + "%";
     heart.style.bottom = "-10%";
-    const drift = (Math.random()-0.5)*300;
-    const rotate = (Math.random()-0.5)*180;
-    heart.style.setProperty("--drift", drift);
-    heart.style.setProperty("--rotate", rotate);
-    const duration = 6 + Math.random()*9;
-    heart.style.animationDuration = duration + "s";
+    heart.style.setProperty("--drift", (Math.random()-0.5)*400);
+    heart.style.setProperty("--rotate", (Math.random()-0.5)*200);
+    const dur = 7 + Math.random()*10;
+    heart.style.animationDuration = dur + "s";
     document.body.appendChild(heart);
-    setTimeout(() => heart.remove(), duration*1000 + 1000);
-  }, 700);
+    setTimeout(() => heart.remove(), dur*1000 + 2000);
+  }, 600);
 }
 
+// Countdown (Dec 23)
 function updateCountdown() {
   const now = new Date();
   let birthday = new Date(now.getFullYear(), 11, 23);
@@ -386,9 +398,19 @@ function updateCountdown() {
 setInterval(updateCountdown, 1000);
 updateCountdown();
 
+// Scroll button
 document.getElementById("scroll-btn").onclick = () => {
-  window.scrollTo({ top: window.innerHeight, behavior: "smooth" });
+  document.querySelector('#about').scrollIntoView({ behavior: "smooth" });
 };
+
+// Fade-in sections on scroll
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) entry.target.classList.add("visible");
+  });
+}, { threshold: 0.15 });
+
+document.querySelectorAll("section").forEach(sec => observer.observe(sec));
 </script>
 </body>
 </html>
